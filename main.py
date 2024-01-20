@@ -1,5 +1,5 @@
 import time
-from pimoroni import Button
+from pimoroni import Button, RGBLED
 import machine
 from picographics import PicoGraphics, DISPLAY_PICO_DISPLAY, PEN_P4
 
@@ -9,6 +9,7 @@ display = PicoGraphics(display=DISPLAY_PICO_DISPLAY, pen_type=PEN_P4, rotate=0)
 display.set_backlight(1)
 display.set_font("bitmap6")
 
+led = RGBLED(6, 7, 8)
 button_a = Button(12)
 button_b = Button(13)
 button_x = Button(14)
@@ -18,6 +19,7 @@ WHITE = display.create_pen(255, 255, 255)
 BLACK = display.create_pen(0, 0, 0)
 BLUE = display.create_pen(10, 220, 252)
 RED = display.create_pen(252, 21, 0)
+YELLOW = display.create_pen(252, 223, 2)
 
 def convert(seconds):
     minutes = int(seconds / 60)
@@ -34,6 +36,7 @@ def clear(color):
 def work(timer):
     seconds = timer
     clear(RED)
+    led.set_rgb(252, 21, 0)
     display.set_pen(WHITE)
     display.text("WORK", 86, 90, 240, 3)
     for second in range(timer):
@@ -50,6 +53,7 @@ def work(timer):
 def rest(timer):
     seconds = timer
     clear(BLUE)
+    led.set_rgb(10, 220, 252)
     display.set_pen(WHITE)
     display.text("BREAK", 76, 90, 240, 3)
     for second in range(timer):
@@ -64,7 +68,7 @@ def rest(timer):
         seconds -= 1
 
 # set up
-clear(RED)
+clear(YELLOW)
 
 while True:
     if button_a.read():
@@ -89,6 +93,7 @@ while True:
         machine.reset()
     else:
         display.set_pen(WHITE)
+        led.set_rgb(252, 131, 2)
         fs = 3
         display.text("5 MINS", 10, 20, 240, fs)
         display.text("15 MINS", 10, 95, 240, fs)
