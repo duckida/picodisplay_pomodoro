@@ -6,7 +6,7 @@ from picographics import PicoGraphics, DISPLAY_PICO_DISPLAY, PEN_P4
 # We're only using a few colours so we can use a 4 bit/16 colour palette and save RAM!
 display = PicoGraphics(display=DISPLAY_PICO_DISPLAY, pen_type=PEN_P4, rotate=0)
 
-display.set_backlight(1)
+display.set_backlight(0.8)
 display.set_font("bitmap6")
 
 led = RGBLED(6, 7, 8)
@@ -21,6 +21,8 @@ BLUE = display.create_pen(10, 220, 252)
 RED = display.create_pen(252, 21, 0)
 YELLOW = display.create_pen(252, 223, 2)
 
+paused = False
+
 def convert(seconds):
     minutes = int(seconds / 60)
     seconds = int(seconds % 60)
@@ -34,6 +36,7 @@ def clear(color):
     display.update()
 
 def work(timer):
+    global paused
     seconds = timer
     clear(RED)
     led.set_rgb(252, 21, 0)
@@ -48,7 +51,17 @@ def work(timer):
             
         display.set_pen(RED)
         display.rectangle(10, 30,300,50)
-        seconds -= 1
+        if button_y.read():
+            if paused == True:
+                paused = False
+                led.set_rgb(252, 21, 0)
+            else:
+                paused = True
+                led.set_rgb(0, 0, 0)
+        if paused == True:
+            pass
+        else:
+            seconds -= 1
 
 def rest(timer):
     seconds = timer
